@@ -1,3 +1,5 @@
 <template>
-  <div>dashboard page</div>
+  <div class="w-full h-full">
+    Dashboard
+  </div>
 </template>

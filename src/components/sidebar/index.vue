@@ -23,7 +23,7 @@ const isActive = ({ name }: MenuRoute) => {
 </script>
 
 <template>
-  <div class="shadow-xl rounded-2xl p-3 flex flex-col gap-1 bg-white">
+  <div class="shadow-xl rounded-2xl p-2 flex flex-col gap-1 bg-white/75 backdrop-blur-lg">
     <SidebarItem
       v-for="(item, index) in menus"
       :key="index"
