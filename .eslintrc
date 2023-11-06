@@ -1,0 +1,16 @@
+{
+  "extends": "@nuxtjs/eslint-config-typescript",
+  "rules": {
+    "camelcase": "off",
+    "import/default": "off",
+    "import/no-named-as-default": "off",
+    "import/no-named-as-default-member": "off",
+    "prefer-promise-reject-errors": "off",
+    "vue/multi-word-component-names": "off",
+    "vue/require-prop-types": "off",
+    "vue/one-component-per-file": "off",
+    "vue/no-multiple-template-root": "off",
+    "vue/require-explicit-emits": "off",
+    "@typescript-eslint/no-unused-vars": "warn"
+  }
+}
