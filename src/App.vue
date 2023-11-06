@@ -5,7 +5,7 @@ import Sidebar from './components/sidebar/index.vue'
 
 <template>
   <HeroProvider>
-    <div class="w-screen h-screen flex p-6 box-border gap-4 bg-gradient-to-br from-purple-500 to-pink-500">
+    <div class="w-screen h-screen flex p-6 box-border gap-6 bg-gradient-to-br from-purple-500 to-pink-500">
       <Sidebar />
 
       <div class="flex-1 h-full flex flex-col text-white overflow-y-auto">

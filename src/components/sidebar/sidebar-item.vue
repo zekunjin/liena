@@ -15,7 +15,7 @@ const router = useRouter()
 
 <template>
   <div
-    :class="{ 'text-white': isActive}"
+    :class="{ 'text-white': isActive, 'hover:text-default-700': !isActive }"
     class="relative p-2 rounded-lg text-default-500 duration-300 transition-all cursor-pointer hover:bg-black/5"
     @click="router.push({ name: to.name })"
   >
