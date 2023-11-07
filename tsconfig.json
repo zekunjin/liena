@@ -20,7 +20,15 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "types": ["unplugin-icons/types/vue"]
+    "types": ["unplugin-icons/types/vue"],
+    "paths": {
+      "~": [
+        "./src"
+      ],
+      "~/*": [
+        "./src/*"
+      ]
+    }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "unimport.d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

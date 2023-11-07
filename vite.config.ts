@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Pages from 'vite-plugin-pages'
@@ -7,6 +8,12 @@ import Unimport from 'unimport/unplugin'
 // https://vitejs.dev/config/
 export default defineConfig(() => ({
   plugins: [vue(), Pages(), Icons({ compiler: 'vue3' }), Unimport.vite({ dts: true, presets: ['vue', 'vue-router'] })],
+
+  resolve: {
+    alias: {
+      '~': path.resolve(__dirname, './src')
+    }
+  },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
