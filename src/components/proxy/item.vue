@@ -18,7 +18,6 @@ const onClick = () => {
 
 <template>
   <Card
-    :transition="{ delay }"
     :class="{ 'bg-white/75': isActive, 'hover:bg-white/50': !isActive }"
     class="rounded transition-all duration-300 p-2 cursor-pointer text-xs"
     @click="onClick"

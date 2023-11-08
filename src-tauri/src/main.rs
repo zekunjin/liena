@@ -3,8 +3,11 @@
 
 mod utils;
 
+use utils::liena;
+
 fn main() {
     tauri::Builder::default()
+        .setup(|app| Ok(liena::setup(app)))
         .invoke_handler(tauri::generate_handler![])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

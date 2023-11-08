@@ -18,7 +18,7 @@ const onSelect = (key: string) => { activeKey.value = key }
         v-for="(item, index) in proxies"
         :key="item"
         :is-active="activeKey === item"
-        :delay="(index - 1) * 50"
+        :delay="index * 50"
         :name="item"
         @click="onSelect(item)"
       />
