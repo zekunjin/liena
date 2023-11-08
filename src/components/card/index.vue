@@ -7,6 +7,7 @@ interface Transition {
 }
 
 interface Props {
+  isDark?: boolean
   transition?: Transition
 }
 
@@ -27,7 +28,7 @@ useMotion(domRef, {
 </script>
 
 <template>
-  <div ref="domRef" class="shadow rounded-xl bg-white/25 backdrop-blur border-b-2 border-r-2 border-white/30">
+  <div ref="domRef" :class="{ 'bg-white/25': !isDark, 'bg-black/25': isDark }" class="shadow rounded-xl backdrop-blur border-b-2 border-r-2 border-white/10">
     <slot />
   </div>
 </template>
