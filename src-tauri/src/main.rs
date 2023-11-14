@@ -5,10 +5,15 @@ mod cmds;
 
 use std::process::{Child, Command};
 
+const CREATE_NO_WINDOW: u32 = 0x08000000;
+
 fn main() {
-    let mut child: Child = Command::new("./resources/_rayner.exe")
-        .spawn()
-        .expect("failed to execute process");
+    let mut command = Command::new("./resources/_rayner.exe");
+
+    #[cfg(target_os = "windows")]
+    command.creation_flags(CREATE_NO_WINDOW);
+
+    let mut child: Child = command.spawn().expect("failed to execute process");
 
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
