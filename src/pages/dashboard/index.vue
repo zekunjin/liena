@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useRaynerRequest, type RaynerOutbound } from '~/composables/use-rayner'
 import { useSubscription } from '~/composables/use-subscription'
+import { useSystemProxy } from '~/composables/use-system-proxy'
 
 const { data, execute } = useRaynerRequest()<RaynerOutbound[]>('/outbounds').get().json()
 
 const { url, parseOutbounds } = useSubscription()
+const { config, setSystemProxy } = useSystemProxy()
 
 const onImport = async () => {
   await parseOutbounds()
@@ -14,6 +16,10 @@ const onImport = async () => {
 const onDelete = async (data: RaynerOutbound) => {
   await useRaynerRequest()('/outbounds').delete(data)
   execute()
+}
+
+const toggleSystemProxy = () => {
+  setSystemProxy({ enable: !config.value?.enable ?? false, port: 1080 })
 }
 </script>
 
@@ -26,7 +32,14 @@ const onDelete = async (data: RaynerOutbound) => {
       </button>
     </div>
 
-    <div class="w-full h-full grid gap-4 grid-cols-3 grid-rows-3">
+    <div>
+      <div>{{ config }}</div>
+      <button @click="toggleSystemProxy()">
+        on / off
+      </button>
+    </div>
+
+    <div class="w-full grid gap-4 grid-cols-3 grid-rows-3">
       <div v-for="item in data ?? []" :key="item.address" class="flex items-center justify-between">
         <span> {{ item.address }}</span>
         <button @click="onDelete(item)">

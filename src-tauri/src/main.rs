@@ -11,7 +11,11 @@ fn main() {
         .expect("failed to execute process");
 
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![cmds::get_rayner_port])
+        .invoke_handler(tauri::generate_handler![
+            cmds::get_rayner_port,
+            cmds::get_sys_proxy,
+            cmds::set_sys_proxy
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
