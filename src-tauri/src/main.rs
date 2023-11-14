@@ -8,6 +8,8 @@ use std::{
     process::{Child, Command},
 };
 
+use tauri::CustomMenuItem;
+
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 
 fn main() {
@@ -18,7 +20,32 @@ fn main() {
 
     let mut child: Child = command.spawn().expect("failed to execute process");
 
+    let dashboard = CustomMenuItem::new("dashboard".to_string(), "Dashboard");
+    let quit = CustomMenuItem::new("quit".to_string(), "Quit");
+    let tray_menu = SystemTrayMenu::new().add_item(dashboard).add_item(quit);
+    let system_tray = SystemTray::new().with_menu(tray_menu);
+
     tauri::Builder::default()
+        .system_tray(system_tray)
+        .on_system_tray_event(|app, event| match event {
+            SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
+                "quit" => {
+                    child.kill().expect("failed to kill process");
+                    std::process::exit(0);
+                }
+                "dashboard" => {
+                    let window = app.get_window("main").unwrap();
+                    if window.is_visible().unwrap() {
+                        window.hide().unwrap();
+                    } else {
+                        window.show().unwrap();
+                        window.set_focus().unwrap();
+                    }
+                }
+                _ => {}
+            },
+            _ => {}
+        })
         .invoke_handler(tauri::generate_handler![
             cmds::get_rayner_port,
             cmds::get_sys_proxy,
