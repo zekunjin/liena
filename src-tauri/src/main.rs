@@ -5,10 +5,11 @@ mod cmds;
 
 use std::{
     os::windows::process::CommandExt,
-    process::{Child, Command},
+    process::Command,
+    sync::{Arc, Mutex},
 };
 
-use tauri::CustomMenuItem;
+use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 
@@ -18,7 +19,11 @@ fn main() {
     #[cfg(target_os = "windows")]
     command.creation_flags(CREATE_NO_WINDOW);
 
-    let mut child: Child = command.spawn().expect("failed to execute process");
+    let child = Arc::new(Mutex::new(
+        command.spawn().expect("failed to execute process"),
+    ));
+
+    let child_clone = Arc::clone(&child);
 
     let dashboard = CustomMenuItem::new("dashboard".to_string(), "Dashboard");
     let quit = CustomMenuItem::new("quit".to_string(), "Quit");
@@ -26,11 +31,13 @@ fn main() {
     let system_tray = SystemTray::new().with_menu(tray_menu);
 
     tauri::Builder::default()
+        .manage(child)
         .system_tray(system_tray)
-        .on_system_tray_event(|app, event| match event {
+        .on_system_tray_event(move |app, event| match event {
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
                 "quit" => {
-                    child.kill().expect("failed to kill process");
+                    let mut child = child_clone.lock().unwrap();
+                    child.kill().expect("failed to kill child process");
                     std::process::exit(0);
                 }
                 "dashboard" => {
@@ -53,6 +60,4 @@ fn main() {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-
-    child.kill().expect("failed to kill process");
 }
