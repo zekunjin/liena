@@ -3,7 +3,7 @@ import { useRaynerRequest, type RaynerOutbound } from '~/composables/use-rayner'
 import { useSubscription } from '~/composables/use-subscription'
 import { useSystemProxy } from '~/composables/use-system-proxy'
 
-const { data, execute } = useRaynerRequest()<RaynerOutbound[]>('/outbounds').get().json()
+const { data, error, execute } = useRaynerRequest()<RaynerOutbound[]>('/outbounds').get().json()
 
 const { url, parseOutbounds } = useSubscription()
 const { config, setSystemProxy } = useSystemProxy()
@@ -37,6 +37,11 @@ const toggleSystemProxy = () => {
       <button @click="toggleSystemProxy()">
         on / off
       </button>
+    </div>
+
+    <div>
+      <span>error: </span>
+      <span>{{ error }}</span>
     </div>
 
     <div class="w-full grid gap-4 grid-cols-3 grid-rows-3">
