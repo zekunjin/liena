@@ -9,10 +9,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use tauri::{
-    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder,
-    WindowEvent,
-};
+use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowEvent};
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 
@@ -36,6 +33,13 @@ fn main() {
     tauri::Builder::default()
         .manage(child)
         .system_tray(system_tray)
+        .on_window_event(|event| match event.event() {
+            tauri::WindowEvent::CloseRequested { api, .. } => {
+                event.window().hide().unwrap();
+                api.prevent_close();
+            }
+            _ => {}
+        })
         .on_system_tray_event(move |app, event| match event {
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
                 "quit" => {
@@ -47,9 +51,6 @@ fn main() {
                     let window = app.get_window("main").unwrap();
                     if window.is_visible().unwrap() {
                         window.hide().unwrap();
-                    } else {
-                        window.show().unwrap();
-                        window.set_focus().unwrap();
                     }
                 }
                 _ => {}
@@ -61,17 +62,6 @@ fn main() {
             cmds::get_sys_proxy,
             cmds::set_sys_proxy
         ])
-        .setup(|app| {
-            let window = app.get_window("main").unwrap();
-            window.on_window_event(|event| match event {
-                WindowEvent::CloseRequested { api, .. } => {
-                    api.prevent_close();
-                }
-                _ => {}
-            });
-
-            Ok(())
-        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
