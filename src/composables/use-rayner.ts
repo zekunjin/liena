@@ -7,6 +7,20 @@ interface Rayner {
   port?: number
 }
 
+export interface RaynerOutbound {
+  tag: string
+  protocol: 'vmess' | 'shadowsocks'
+  address: string
+  port: number
+  uuid?: string
+  method?: string
+  password?: string
+  security?: string
+  alterId?: number
+
+  enabled?: boolean
+}
+
 export const useRayner = () => {
   const data = ref<Rayner>({})
   const isFetching = ref(false)
@@ -26,6 +40,6 @@ export const useRayner = () => {
 
 export const useRaynerRequest = () => {
   const store = useRaynerStore()
-  const _RAYNER_SERVER = `http://127.0.0.1:${store.port}`
+  const _RAYNER_SERVER = `http://localhost:${store.port}`
   return createFetch({ baseUrl: _RAYNER_SERVER })
 }

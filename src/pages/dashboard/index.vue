@@ -1,10 +1,38 @@
 <script setup lang="ts">
-import { useRaynerRequest } from '~/composables/use-rayner'
-const { data } = useRaynerRequest()('/outbounds').get()
+import { useRaynerRequest, type RaynerOutbound } from '~/composables/use-rayner'
+import { useSubscription } from '~/composables/use-subscription'
+
+const { data, execute } = useRaynerRequest()<RaynerOutbound[]>('/outbounds').get().json()
+
+const { url, parseOutbounds } = useSubscription()
+
+const onImport = async () => {
+  await parseOutbounds()
+  execute()
+}
+
+const onDelete = async (data: RaynerOutbound) => {
+  await useRaynerRequest()('/outbounds').delete(data)
+  execute()
+}
 </script>
 
 <template>
-  <div class="w-full h-full grid gap-4 grid-cols-3 grid-rows-3">
-    {{ data }}
+  <div>
+    <div class="flex items-center gap-2">
+      <input v-model="url" class="flex-1">
+      <button class="bg-primary-900 px-3 h-full text-white" @click="onImport()">
+        import
+      </button>
+    </div>
+
+    <div class="w-full h-full grid gap-4 grid-cols-3 grid-rows-3">
+      <div v-for="item in data ?? []" :key="item.address" class="flex items-center justify-between">
+        <span> {{ item.address }}</span>
+        <button @click="onDelete(item)">
+          delete
+        </button>
+      </div>
+    </div>
   </div>
 </template>
