@@ -9,7 +9,10 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
+use tauri::{
+    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowBuilder,
+    WindowEvent,
+};
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 
@@ -34,11 +37,18 @@ fn main() {
         .manage(child)
         .system_tray(system_tray)
         .setup(|app| {
-            let main_window = app.get_window("main").unwrap();
-            app.listen_global("tauri://close-requested", move |_| {
-                main_window.hide().unwrap();
-                ()
+            let window = WindowBuilder::new(app, "main", Default::default())
+                .title("My Tauri App")
+                .build()
+                .unwrap();
+
+            window.on_window_event(|event| match event {
+                WindowEvent::CloseRequested { api, .. } => {
+                    api.prevent_close();
+                }
+                _ => {}
             });
+
             Ok(())
         })
         .on_system_tray_event(move |app, event| match event {
