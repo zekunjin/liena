@@ -33,6 +33,14 @@ fn main() {
     tauri::Builder::default()
         .manage(child)
         .system_tray(system_tray)
+        .setup(|app| {
+            let main_window = app.get_window("main").unwrap();
+            app.listen_global("tauri://close-requested", move |_| {
+                main_window.hide().unwrap();
+                ()
+            });
+            Ok(())
+        })
         .on_system_tray_event(move |app, event| match event {
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
                 "quit" => {
