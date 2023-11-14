@@ -36,21 +36,6 @@ fn main() {
     tauri::Builder::default()
         .manage(child)
         .system_tray(system_tray)
-        .setup(|app| {
-            let window = WindowBuilder::new(app, "main", Default::default())
-                .title("My Tauri App")
-                .build()
-                .unwrap();
-
-            window.on_window_event(|event| match event {
-                WindowEvent::CloseRequested { api, .. } => {
-                    api.prevent_close();
-                }
-                _ => {}
-            });
-
-            Ok(())
-        })
         .on_system_tray_event(move |app, event| match event {
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
                 "quit" => {
@@ -76,6 +61,17 @@ fn main() {
             cmds::get_sys_proxy,
             cmds::set_sys_proxy
         ])
+        .setup(|app| {
+            let window = app.get_window("main").unwrap();
+            window.on_window_event(|event| match event {
+                WindowEvent::CloseRequested { api, .. } => {
+                    api.prevent_close();
+                }
+                _ => {}
+            });
+
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
