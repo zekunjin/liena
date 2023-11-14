@@ -3,7 +3,10 @@
 
 mod cmds;
 
-use std::process::{Child, Command};
+use std::{
+    os::windows::process::CommandExt,
+    process::{Child, Command},
+};
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 
