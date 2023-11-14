@@ -9,7 +9,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, WindowEvent};
+use tauri::{CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
 
 const CREATE_NO_WINDOW: u32 = 0x08000000;
 
