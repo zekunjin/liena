@@ -5,7 +5,8 @@ export const useSubscription = () => {
   const url = ref('')
 
   const parseOutbounds = async () => {
-    await useRaynerRequest()('/subscriptions', { method: 'POST', body: { link: url.value } })
+    const client = await useRaynerRequest()
+    await client('/subscriptions', { method: 'POST', body: { link: url.value } })
     url.value = ''
   }
 

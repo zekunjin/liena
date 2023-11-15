@@ -43,6 +43,7 @@ fn main() {
         .on_system_tray_event(move |app, event| match event {
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
                 "quit" => {
+                    let _ = cmds::set_sys_proxy(false, 1080);
                     let mut child = child_clone.lock().unwrap();
                     child.kill().expect("failed to kill child process");
                     std::process::exit(0);
