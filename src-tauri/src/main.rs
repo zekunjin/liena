@@ -50,15 +50,20 @@ fn main() {
                 }
                 "dashboard" => {
                     let window = app.get_window("main").unwrap();
-                    if window.is_visible().unwrap() {
-                        window.hide().unwrap();
-                    } else {
+                    if !window.is_visible().unwrap() {
                         window.show().unwrap();
                         window.set_focus().unwrap();
                     }
                 }
                 _ => {}
             },
+            SystemTrayEvent::LeftClick { .. } => {
+                let window = app.get_window("main").unwrap();
+                if !window.is_visible().unwrap() {
+                    window.show().unwrap();
+                    window.set_focus().unwrap();
+                }
+            }
             _ => {}
         })
         .invoke_handler(tauri::generate_handler![
