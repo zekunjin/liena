@@ -1,5 +1,7 @@
 import { ref } from 'vue'
 import { type HttpVerb, type FetchOptions, Body, fetch, ResponseType } from '@tauri-apps/api/http'
+import defu from 'defu'
+import { useRaynerStore } from '~/store/rayner'
 
 export interface CreateRequestOptions {
   baseUrl?: string
@@ -9,6 +11,37 @@ export interface CreateRequestOptions {
 export interface RequestOptions {
   method?: HttpVerb
   body?: Record<any, any>
+}
+
+interface KeepCallingOptions {
+  url: string
+  timeout: number
+}
+
+export const checkHealth = (options: Partial<KeepCallingOptions> = { }): Promise<void> => {
+  const _options = defu(options, { url: '/', timeout: 20 * 1000 }) as KeepCallingOptions
+
+  return new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      reject()
+    }, options.timeout)
+
+    const call = async () => {
+      try {
+        const response = await fetch(_options.url)
+        if (response.ok) {
+          clearTimeout(timeoutId)
+          resolve()
+        } else {
+          call()
+        }
+      } catch (error) {
+        call()
+      }
+    }
+
+    call()
+  })
 }
 
 export const createRequest = ({ baseUrl, timeout }: CreateRequestOptions = { baseUrl: '/' }) => async <T>(url: string, options: RequestOptions = {}) => {
@@ -22,6 +55,18 @@ export const createRequest = ({ baseUrl, timeout }: CreateRequestOptions = { bas
   const data = ref<T>()
 
   const execute = async () => {
+    const store = useRaynerStore()
+
+    if (!store.isRunning) {
+      try {
+        await checkHealth({ url: baseUrl })
+        store.setRaynerRuningState(true)
+      } catch (error) {
+        store.setRaynerRuningState(false)
+        throw error
+      }
+    }
+
     const response = await fetch(_url, _options)
     if (response.ok) { data.value = response.data as T }
   }

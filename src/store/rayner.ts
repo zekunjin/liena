@@ -1,19 +1,23 @@
 import { defineStore } from 'pinia'
-import { useRayner } from '~/composables/use-rayner'
 
 interface RaynerState {
   port?: number
+  isRunning?: boolean
 }
 
 export const useRaynerStore = defineStore('ranyer', {
   state: (): RaynerState => ({
-    port: undefined
+    port: undefined,
+    isRunning: false
   }),
 
   actions: {
-    async setup () {
-      const { port } = await useRayner().execute()
-      this.port = port
+    setRaynerPort (value: number) {
+      this.port = value
+    },
+
+    setRaynerRuningState (value: boolean) {
+      this.isRunning = value
     }
   }
 })

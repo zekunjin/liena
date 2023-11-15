@@ -14,7 +14,7 @@ const onImport = async () => {
 }
 
 const onDelete = async (data: RaynerOutbound) => {
-  const client =  await useRaynerRequest()
+  const client = await useRaynerRequest()
   await client('/outbounds', { method: 'DELETE', body: data })
   execute?.()
 }

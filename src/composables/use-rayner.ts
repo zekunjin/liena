@@ -59,7 +59,7 @@ export const useRaynerOutbounds = () => {
       isFetching.value = false
     })
   }
-  
+
   execute()
 
   return { data, isFetching, execute }

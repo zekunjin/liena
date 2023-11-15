@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { HeroProvider } from 'hero-motion'
 import Sidebar from './components/sidebar/index.vue'
-import { useRaynerStore } from './store/rayner'
-
-const { setup } = useRaynerStore()
-
-setup()
 </script>
 
 <template>
