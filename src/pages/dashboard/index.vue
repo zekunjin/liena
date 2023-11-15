@@ -2,6 +2,7 @@
 import { useRaynerRequest, useRaynerOutbounds, type RaynerOutbound } from '~/composables/use-rayner'
 import { useSubscription } from '~/composables/use-subscription'
 import { useSystemProxy } from '~/composables/use-system-proxy'
+import Card from '~/components/card/index.vue'
 
 const { data, isFetching, execute } = useRaynerOutbounds()
 
@@ -46,12 +47,14 @@ const toggleSystemProxy = () => {
     </div>
 
     <div class="w-full grid gap-4 grid-cols-3 grid-rows-3">
-      <div v-for="item in data ?? []" :key="item.address" class="flex items-center justify-between">
-        <span> {{ item.address }}</span>
+      <Card v-for="(item, index) in data ?? []" :key="item.address" :transition="{ delay: index * 50 }" is-dark class="px-4 py-2 select-none">
+        <div class="text-sm text-white/75 font-light">
+          {{ item.address }}
+        </div>
         <button @click="onDelete(item)">
           delete
         </button>
-      </div>
+      </Card>
     </div>
   </div>
 </template>
