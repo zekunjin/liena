@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { useRaynerRequest, type RaynerOutbound } from '~/composables/use-rayner'
+import { useRaynerRequest, useRaynerOutbounds, type RaynerOutbound } from '~/composables/use-rayner'
 import { useSubscription } from '~/composables/use-subscription'
 import { useSystemProxy } from '~/composables/use-system-proxy'
 
-const { data, error, isFetching, execute } = useRaynerRequest()<RaynerOutbound[]>('/outbounds').get().json()
+const { data, isFetching, execute } = useRaynerOutbounds()
 
 const { url, parseOutbounds } = useSubscription()
 const { config, setSystemProxy } = useSystemProxy()
 
 const onImport = async () => {
   await parseOutbounds()
-  execute()
+  execute?.()
 }
 
 const onDelete = async (data: RaynerOutbound) => {
-  await useRaynerRequest()('/outbounds').delete(data)
-  execute()
+  await useRaynerRequest()('/outbounds', { method: 'DELETE', body: data })
+  execute?.()
 }
 
 const toggleSystemProxy = () => {
@@ -37,11 +37,6 @@ const toggleSystemProxy = () => {
       <button @click="toggleSystemProxy()">
         on / off
       </button>
-    </div>
-
-    <div>
-      <span>error: </span>
-      <span>{{ error }}</span>
     </div>
 
     <div>

@@ -1,7 +1,8 @@
 import { ref } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
-import { createFetch, tryOnMounted } from '@vueuse/core'
+import { tryOnMounted } from '@vueuse/core'
 import { useRaynerStore } from '~/store/rayner'
+import { createRequest } from './use-request'
 
 interface Rayner {
   port?: number
@@ -41,5 +42,25 @@ export const useRayner = () => {
 export const useRaynerRequest = () => {
   const store = useRaynerStore()
   const _RAYNER_SERVER = `http://localhost:${store.port}`
-  return createFetch({ baseUrl: _RAYNER_SERVER })
+  return createRequest({ baseUrl: _RAYNER_SERVER })
+}
+
+export const useRaynerOutbounds = () => {
+  const data = ref<RaynerOutbound[]>([])
+  const isFetching = ref(false)
+
+  const execute = () => {
+    isFetching.value = true
+    useRaynerRequest()<RaynerOutbound[]>('/outbounds').then((response) => {
+      if (response.data.value) {
+        data.value = response.data.value
+      }
+    }).finally(() => {
+      isFetching.value = false
+    })
+  }
+  
+  execute()
+
+  return { data, isFetching, execute }
 }
