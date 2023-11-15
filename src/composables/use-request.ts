@@ -22,13 +22,11 @@ export const checkHealth = (options: Partial<KeepCallingOptions> = { }): Promise
   const _options = defu(options, { url: '/', timeout: 20 * 1000 }) as KeepCallingOptions
 
   return new Promise((resolve, reject) => {
-    const timeoutId = setTimeout(() => {
-      reject()
-    }, options.timeout)
+    const timeoutId = setTimeout(() => { reject() }, _options.timeout)
 
     const call = async () => {
       try {
-        const response = await fetch(_options.url)
+        const response = await fetch(_options.url, { method: 'GET', responseType: ResponseType.JSON })
         if (response.ok) {
           clearTimeout(timeoutId)
           resolve()
@@ -67,8 +65,10 @@ export const createRequest = ({ baseUrl, timeout }: CreateRequestOptions = { bas
       }
     }
 
-    const response = await fetch(_url, _options)
-    if (response.ok) { data.value = response.data as T }
+    if (store.isRunning) {
+      const response = await fetch(_url, _options)
+      if (response.ok) { data.value = response.data as T }
+    }
   }
 
   await execute()
