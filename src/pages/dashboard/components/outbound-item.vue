@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import TrashCan from '~icons/carbon/trash-can'
-import { useRaynerRequest, type RaynerOutbound } from '~/composables/use-rayner'
+import { useRaynerRequest } from '~/composables/use-rayner'
 
 interface Props {
   address: string
@@ -14,7 +14,7 @@ const emit = defineEmits(['click', 'afterDelete'])
 
 const showBtn = ref(false)
 
-const onDelete = async (data: RaynerOutbound) => {
+const onDelete = async (data: { address: string }) => {
   const client = await useRaynerRequest()
   await client('/outbounds', { method: 'DELETE', body: data })
   emit('afterDelete')

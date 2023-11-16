@@ -38,7 +38,7 @@ const onSelect = (value: string) => {
 <template>
   <div class="flex items-center gap-2">
     <div class="flex relative bg-black/10 rounded-xl p-1">
-      <ModeItem v-for="mode in modes" :key="mode" :is-active="activeKey === mode.value" @click="onSelect(mode.value)">
+      <ModeItem v-for="mode in modes" :key="mode.value" :is-active="activeKey === mode.value" @click="onSelect(mode.value)">
         {{ mode.label }}
       </ModeItem>
     </div>
