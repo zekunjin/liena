@@ -1,76 +1,49 @@
 <script setup lang="ts">
-import Return from '~icons/carbon/return'
-import TrashCan from '~icons/carbon/trash-can'
-import { useRaynerRequest, useRaynerOutbounds, type RaynerOutbound } from '~/composables/use-rayner'
-import { useSubscription } from '~/composables/use-subscription'
-import { useSystemProxy } from '~/composables/use-system-proxy'
-import Card from '~/components/card/index.vue'
+import OutboundItem from './components/outbound-item.vue'
+import SubscriptionInput from './components/subscription-input.vue'
+import ModeSelector from './components/mode-selector/index.vue'
+import { useRaynerOutbounds } from '~/composables/use-rayner'
+import { useXray } from '~/composables/use-xray'
 
-const { data, isFetching, execute } = useRaynerOutbounds()
-
-const { url, parseOutbounds } = useSubscription()
-const { config, setSystemProxy } = useSystemProxy()
-
-const onImport = async () => {
-  await parseOutbounds()
-  execute?.()
-}
-
-const onDelete = async (data: RaynerOutbound) => {
-  const client = await useRaynerRequest()
-  await client('/outbounds', { method: 'DELETE', body: data })
-  execute?.()
-}
-
-const toggleSystemProxy = () => {
-  setSystemProxy({ enable: !config.value?.enable ?? false, port: 1080 })
-}
+const { data, execute } = useRaynerOutbounds()
+const { data: xrayConf } = useXray()
 </script>
 
 <template>
   <div class="flex flex-col gap-4">
-    <div class="relative">
-      <input v-model="url" placeholder="Subscription URL" class="text-white/75 bg-black/25 rounded-xl py-2 px-4 w-full focus:outline-none placeholder:text-white/10" @input.enter="onImport()">
-      <Return class="absolute top-1/2 -translate-y-1/2 right-4 cursor-pointer" @click="onImport()" />
-    </div>
+    <SubscriptionInput @after-import="execute?.()" />
 
-    <div class="w-full flex-1 h-0 grid gap-4 grid-cols-3">
-      <Card class="py-2 select-none col-span-2 overflow-y-auto w-full flex flex-col">
-        <div v-for="item in data ?? []" :key="item.address" class="cursor-pointer transition-all duration-300 px-4 py-2 hover:bg-black/10">
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="text-sm text-default-900">
-                {{ item.address }}
-              </div>
-              <div>
-                {{ item.protocol }}
-              </div>
-            </div>
-
-            <TrashCan class="cursor-pointer" @click="onDelete(item)" />
-          </div>
+    <div class="w-full flex-1 h-0 grid gap-4 grid-cols-3 grid-rows-3">
+      <div class="select-none col-span-2 row-span-2 flex flex-col rounded-xl overflow-hidden">
+        <div class="bg-gray-50 p-4 shadow relative z-10">
+          <ModeSelector />
         </div>
-      </Card>
+        <div class="p-4 overflow-y-auto w-full h-0 flex-1 flex flex-col bg-white gap-2">
+          <OutboundItem
+            v-for="item in data ?? []"
+            :key="item.address"
+            :address="item.address"
+            :protocol="item.protocol"
+            @after-delete="execute?.()"
+          />
+        </div>
+      </div>
 
-      <Card :transition="{ delay: 100 }" class="p-4 select-none">
+      <div
+        :transition="{
+          delay:
+            100
+        }"
+        class="p-4 select-none bg-white rounded-xl row-span-2"
+      >
         <div>
           i
         </div>
-      </Card>
+      </div>
 
-      <Card :transition="{ delay: 200 }" class="p-4 select-none col-span-3">
-        <div>
-          <div>{{ config }}</div>
-          <button @click="toggleSystemProxy()">
-            on / off
-          </button>
-        </div>
-
-        <div>
-          <span>loading: </span>
-          <span>{{ isFetching }}</span>
-        </div>
-      </Card>
+      <div :transition="{ delay: 200 }" class="p-4 select-none col-span-3 shrink-0 bg-white rounded-xl overflow-y-auto">
+        {{ xrayConf }}
+      </div>
     </div>
   </div>
 </template>
