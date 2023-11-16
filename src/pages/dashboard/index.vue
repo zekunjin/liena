@@ -15,7 +15,7 @@ const { data: xrayConf } = useXray()
 
     <div class="w-full flex-1 h-0 grid gap-4 grid-cols-3 grid-rows-3">
       <div class="select-none col-span-2 row-span-2 flex flex-col rounded-xl overflow-hidden">
-        <div class="bg-gray-50 p-4 shadow relative z-10">
+        <div class="bg-gray-50 p-3 shadow relative z-10">
           <ModeSelector />
         </div>
         <div class="p-4 overflow-y-auto w-full h-0 flex-1 flex flex-col bg-white gap-2">

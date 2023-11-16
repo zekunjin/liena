@@ -17,7 +17,7 @@ const onClick = () => {
 
 <template>
   <div class="relative py-1 px-3 text-default-500 cursor-pointer" :class="{ 'text-default-900': isActive }" @click="onClick">
-    <div class="relative z-20">
+    <div class="relative z-20 text-xs">
       <slot />
     </div>
 
