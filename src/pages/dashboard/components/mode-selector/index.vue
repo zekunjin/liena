@@ -42,7 +42,5 @@ const onSelect = (value: string) => {
         {{ mode.label }}
       </ModeItem>
     </div>
-
-    <span>system proxy: {{ config?.enable }}</span>
   </div>
 </template>

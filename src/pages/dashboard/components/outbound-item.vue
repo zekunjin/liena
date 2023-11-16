@@ -25,8 +25,8 @@ const onDelete = async (data: { address: string }) => {
   <div class="outbound-item cursor-pointer transition-all duration-300 p-2 rounded-lg hover:bg-black/5" @click="emit('click')" @mouseenter="showBtn = true" @mouseleave="showBtn = false">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <img :src="`/${protocol}.webp`" class="w-12 h-12 rounded-xl block">
-        <div class="text-sm font-bold">
+        <img :src="`/${protocol}.webp`" class="w-10 h-10 rounded-xl block">
+        <div class="text-xs font-bold">
           <div class="uppercase text-default-700 flex items-center gap-4">
             <span> {{ address }}</span>
 
@@ -41,7 +41,7 @@ const onDelete = async (data: { address: string }) => {
         </div>
       </div>
 
-      <div class="cursor-pointer mr-4 text-lg hover:text-sm p-2 hover:bg-red-600 hover:text-white transition-all duration-300 rounded-lg" :class="{ 'opacity-1': showBtn, 'opacity-0': !showBtn }" @click="onDelete({ address })">
+      <div class="cursor-pointer hover:text-sm p-2 hover:bg-red-600 hover:text-white transition-all duration-300 rounded-lg" :class="{ 'opacity-1': showBtn, 'opacity-0': !showBtn }" @click="onDelete({ address })">
         <TrashCan />
       </div>
     </div>
