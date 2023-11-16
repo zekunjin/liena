@@ -30,7 +30,7 @@ useMotion(domRef, {
 <template>
   <div
     ref="domRef"
-    :class="{ 'bg-white/25 border-white/10': !isDark, 'bg-black/25 border-none': isDark }"
+    :class="{ 'bg-white/10 border-white/10': !isDark, 'bg-black/25 border-none': isDark }"
     class="shadow rounded-xl backdrop-blur border-b-2 border-r-2"
   >
     <slot />

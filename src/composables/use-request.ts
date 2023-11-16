@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import { type HttpVerb, type FetchOptions, Body, fetch, ResponseType } from '@tauri-apps/api/http'
-import defu from 'defu'
+import { isRaynerServiceRunning } from './use-rayner'
 import { useRaynerStore } from '~/store/rayner'
 
 export interface CreateRequestOptions {
@@ -13,37 +13,7 @@ export interface RequestOptions {
   body?: Record<any, any>
 }
 
-interface KeepCallingOptions {
-  url: string
-  timeout: number
-}
-
-export const checkHealth = (options: Partial<KeepCallingOptions> = { }): Promise<void> => {
-  const _options = defu(options, { url: '/', timeout: 20 * 1000 }) as KeepCallingOptions
-
-  return new Promise((resolve, reject) => {
-    const timeoutId = setTimeout(() => { reject() }, _options.timeout)
-
-    const call = async () => {
-      try {
-        const response = await fetch(_options.url, { method: 'GET', responseType: ResponseType.JSON })
-        if (response.ok) {
-          clearTimeout(timeoutId)
-          resolve()
-        } else {
-          call()
-        }
-      } catch (error) {
-        call()
-      }
-    }
-
-    call()
-  })
-}
-
-export const createRequest = ({ baseUrl, timeout }: CreateRequestOptions = { baseUrl: '/' }) => async <T>(url: string, options: RequestOptions = {}) => {
-  const _url = baseUrl + url
+export const createRequest = ({ timeout }: CreateRequestOptions = {}) => async <T>(url: string, options: RequestOptions = {}) => {
   const _options: FetchOptions = { method: options.method ?? 'GET', timeout, responseType: ResponseType.JSON }
 
   if (options.body) {
@@ -57,8 +27,9 @@ export const createRequest = ({ baseUrl, timeout }: CreateRequestOptions = { bas
 
     if (!store.isRunning) {
       try {
-        await checkHealth({ url: baseUrl })
+        const { port } = await isRaynerServiceRunning()
         store.setRaynerRuningState(true)
+        store.setRaynerPort(port)
       } catch (error) {
         store.setRaynerRuningState(false)
         throw error
@@ -66,6 +37,8 @@ export const createRequest = ({ baseUrl, timeout }: CreateRequestOptions = { bas
     }
 
     if (store.isRunning) {
+      const _RAYNER_SERVER = `http://localhost:${store.port}`
+      const _url = _RAYNER_SERVER + url
       const response = await fetch(_url, _options)
       if (response.ok) { data.value = response.data as T }
     }
