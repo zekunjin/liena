@@ -4,6 +4,8 @@ import ModeItem from './mode-item.vue'
 import { useSystemProxy } from '~/composables/use-system-proxy'
 import * as Constants from '~/utils/constants'
 
+const props = defineProps<{ xrayPort?: number }>()
+
 const modes = [
   { label: 'Config', value: Constants.MODE_CONFIG },
   { label: 'Direct', value: Constants.MODE_DIRECT }
@@ -24,11 +26,11 @@ const isDirect = (value: string) => value === Constants.MODE_DIRECT
 
 const onSelect = (value: string) => {
   if (isDirect(value)) {
-    setSystemProxy({ enable: false, port: 1080 })
+    setSystemProxy({ enable: false, port: 80 })
   }
 
   if (isProxy(value)) {
-    setSystemProxy({ enable: true, port: 1080 })
+    setSystemProxy({ enable: true, port: props.xrayPort ?? 1080 })
   }
 
   activeKey.value = value

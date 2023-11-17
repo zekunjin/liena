@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import TrashCan from '~icons/carbon/trash-can'
-import { useRaynerRequest } from '~/composables/use-rayner'
+import Draggable from '~icons/carbon/draggable'
 
 interface Props {
   address: string
@@ -13,12 +12,6 @@ defineProps<Props>()
 const emit = defineEmits(['click', 'afterDelete'])
 
 const showBtn = ref(false)
-
-const onDelete = async (data: { address: string }) => {
-  const client = await useRaynerRequest()
-  await client('/outbounds', { method: 'DELETE', body: data })
-  emit('afterDelete')
-}
 </script>
 
 <template>
@@ -28,7 +21,7 @@ const onDelete = async (data: { address: string }) => {
         <img :src="`/${protocol}.webp`" class="w-8 h-8 rounded-xl block">
         <div class="text-xs">
           <div class="font-bold uppercase text-default-700 flex items-center gap-4">
-            <span> {{ address }}</span>
+            <span>{{ address }}</span>
 
             <span class="relative flex h-[10px] w-[10px]">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />
@@ -41,8 +34,8 @@ const onDelete = async (data: { address: string }) => {
         </div>
       </div>
 
-      <div class="cursor-pointer text-xs p-2 hover:bg-red-600 hover:text-white transition-all duration-300 rounded-lg" :class="{ 'opacity-1': showBtn, 'opacity-0': !showBtn }" @click="onDelete({ address })">
-        <TrashCan />
+      <div class="cursor-pointer text-xs p-2 hover:bg-black/50 hover:text-white transition-all duration-300 rounded-lg" :class="{ 'opacity-1': showBtn, 'opacity-0': !showBtn }">
+        <Draggable />
       </div>
     </div>
   </div>
