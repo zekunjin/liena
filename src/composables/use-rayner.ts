@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { invoke } from '@tauri-apps/api/tauri'
 import { tryOnMounted } from '@vueuse/core'
 import { fetch } from '@tauri-apps/api/http'
@@ -21,6 +21,7 @@ export interface RaynerOutbound {
   alterId?: number
 
   enabled?: boolean
+  index?: number
 }
 
 export const useRayner = () => {
@@ -50,6 +51,12 @@ export const useRaynerOutbounds = () => {
   const data = ref<RaynerOutbound[]>([])
   const isFetching = ref(false)
 
+  const outbounds = computed(() => data.value.sort((a, b) => {
+    if (!a.index) { return 1 }
+    if (!b.index) { return -1 }
+    return a.index - b.index
+  }))
+
   const execute = async () => {
     isFetching.value = true
     const client = await useRaynerRequest()
@@ -64,7 +71,13 @@ export const useRaynerOutbounds = () => {
 
   execute()
 
-  return { data, isFetching, execute }
+  return { data, outbounds, isFetching, execute }
+}
+
+export const usePatchRaynerOutbounds = async (outbounds: RaynerOutbound[] = []) => {
+  const client = await useRaynerRequest()
+  const body = outbounds.map((o, index) => ({ ...o, index: index + 1 }))
+  return client<RaynerOutbound[]>('/outbounds', { method: 'PATCH', body })
 }
 
 export const isRaynerServiceRunning = (options: Partial<{ timeout: number }> = {}): Promise<{ port: number }> => {
