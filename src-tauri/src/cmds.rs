@@ -2,6 +2,7 @@ use anyhow::Result;
 use serde_yaml::Mapping;
 use std::fs;
 use sysproxy::Sysproxy;
+use tauri::{AppHandle, Icon};
 
 type CmdResult<T = ()> = Result<T, String>;
 
@@ -19,7 +20,7 @@ pub fn get_rayner_port() -> CmdResult<String> {
 }
 
 #[tauri::command]
-pub fn get_sys_proxy() -> CmdResult<Mapping> {
+pub fn get_sys_proxy(app: AppHandle) -> CmdResult<Mapping> {
     let current = Sysproxy::get_system_proxy().unwrap();
 
     let mut map = Mapping::new();
@@ -29,6 +30,16 @@ pub fn get_sys_proxy() -> CmdResult<Mapping> {
         format!("{}:{}", current.host, current.port).into(),
     );
     map.insert("bypass".into(), current.bypass.into());
+
+    let indication_icon = if current.enable.into() {
+        include_bytes!("../icons/32x32.png").to_vec()
+    } else {
+        include_bytes!("../icons/32x32__disabled.png").to_vec()
+    };
+
+    app.tray_handle()
+        .set_icon(Icon::Raw(indication_icon))
+        .unwrap();
 
     Ok(map)
 }
