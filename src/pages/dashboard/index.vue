@@ -5,13 +5,15 @@ import SubscriptionInput from './components/subscription-input.vue'
 import ModeSelector from './components/mode-selector/index.vue'
 import InboundGroup from './components/inbound-group.vue'
 import OutboundDescription from './components/outbound-description.vue'
+import CoreFiles from './components/core-files.vue'
+import SubscriptionGroup from './components/subscription-group.vue'
 import { type RaynerOutbound, useRaynerOutbounds, usePatchRaynerOutbounds } from '~/composables/use-rayner'
 import { useXray } from '~/composables/use-xray'
 
 let from = -1
 
 const { outbounds, execute } = useRaynerOutbounds()
-const { profile, inbound } = useXray()
+const { inbound } = useXray()
 const selectedRow = ref<RaynerOutbound>()
 const hasPressed = ref(false)
 
@@ -65,15 +67,15 @@ const onDrop = async (_: RaynerOutbound, to: number) => {
       </div>
 
       <div :transition="{ delay: 200 }" class="p-4 select-none shrink-0 bg-white rounded-xl overflow-x-hidden overflow-y-auto">
-        <InboundGroup :inbound="inbound" />
+        <CoreFiles />
       </div>
 
       <div :transition="{ delay: 300 }" class="p-4 select-none shrink-0 bg-white rounded-xl overflow-x-hidden overflow-y-auto">
-        {{ inbound.listen }}
+        <SubscriptionGroup />
       </div>
 
       <div :transition="{ delay: 400 }" class="p-4 select-none shrink-0 bg-white rounded-xl overflow-x-hidden overflow-y-auto">
-        {{ profile }}
+        <InboundGroup :inbound="inbound" />
       </div>
     </div>
   </div>

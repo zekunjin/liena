@@ -24,6 +24,10 @@ export interface RaynerOutbound {
   index?: number
 }
 
+export interface RaynerSubscription {
+  link: string
+}
+
 export const useRayner = () => {
   const data = ref<Rayner>({})
   const isFetching = ref(false)
@@ -111,4 +115,25 @@ export const isRaynerServiceRunning = (options: Partial<{ timeout: number }> = {
 
     ping()
   })
+}
+
+export const useRaynerSubscriptions = () => {
+  const data = ref<RaynerSubscription[]>([])
+  const isFetching = ref(false)
+
+  const execute = async () => {
+    isFetching.value = true
+    const client = await useRaynerRequest()
+    client<RaynerSubscription[]>('/subscriptions').then((response) => {
+      if (response.data.value) {
+        data.value = response.data.value
+      }
+    }).finally(() => {
+      isFetching.value = false
+    })
+  }
+
+  execute()
+
+  return { data, isFetching, execute }
 }
