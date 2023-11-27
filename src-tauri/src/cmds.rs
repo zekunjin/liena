@@ -2,7 +2,7 @@ use anyhow::Result;
 use serde_yaml::Mapping;
 use std::fs;
 use sysproxy::Sysproxy;
-use tauri::{AppHandle, Icon};
+use tauri::{api, AppHandle, Icon, Manager};
 
 type CmdResult<T = ()> = Result<T, String>;
 
@@ -56,4 +56,9 @@ pub fn set_sys_proxy(enable: bool, port: u16) -> CmdResult {
     let _ = sysproxy.set_system_proxy();
 
     Ok(())
+}
+
+#[tauri::command]
+pub fn open_file(app: AppHandle, path: String) {
+    api::shell::open(&app.shell_scope(), path, None).unwrap();
 }

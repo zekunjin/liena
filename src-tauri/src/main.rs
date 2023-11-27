@@ -69,7 +69,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             cmds::get_rayner_port,
             cmds::get_sys_proxy,
-            cmds::set_sys_proxy
+            cmds::set_sys_proxy,
+            cmds::open_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
